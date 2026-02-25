@@ -388,3 +388,92 @@ var statsByMajor = students
 
 * **`FirstOrDefault()` is your friend:** When searching for a specific user by ID, use `.FirstOrDefault(u => u.Id == 1)`. If the user isn't found, it returns `null` instead of crashing.
 * **`Any()` is faster than `Count() > 0`:** If you just need to know if a list has *at least one* matching item, `Any()` stops looking the moment it finds a match, whereas `Count()` has to check the entire list.
+
+## PLINQ (Parellel LINQ)
+
+If standard LINQ is a single chef preparing a five-course meal, **Parallel LINQ (PLINQ)** is a kitchen full of chefs where each one takes a different ingredient to prep simultaneously.
+
+PLINQ is an implementation of the Task Parallel Library (TPL) that allows your queries to automatically utilize multiple processors/cores on your computer.
+
+---
+
+## 1. How to use it: `.AsParallel()`
+
+Turning a normal LINQ query into a parallel one is often as simple as adding a single method call.
+
+```csharp
+var source = Enumerable.Range(1, 1000000);
+
+// Standard LINQ (Sequential)
+var results = source.Where(n => n % 3 == 0).ToList();
+
+// PLINQ (Parallel)
+var parallelResults = source.AsParallel()
+                            .Where(n => n % 3 == 0)
+                            .ToList();
+
+```
+
+---
+
+## 2. When to use PLINQ
+
+Parallelizing sounds like it should always be faster, but there is "overhead" involved in splitting the data and merging it back together. Use PLINQ when:
+
+1. **The dataset is large:** Millions of items.
+2. **The operation is expensive:** High-intensity math, heavy string manipulation, or complex logic.
+3. **You have multiple CPU cores:** Parallelism won't help on a single-core machine.
+
+---
+
+## 3. The "Gotchas" of PLINQ
+
+### A. Ordering is lost by default
+
+Because PLINQ processes items in chunks across different threads, the original order of your list is usually lost in the final result. If order matters, you must force it:
+
+```csharp
+var ordered = source.AsParallel()
+                    .AsOrdered() // Ensures result follows original sequence
+                    .Where(n => n > 100)
+                    .ToList();
+
+```
+
+### B. Thread Safety
+
+If your LINQ query modifies a shared variable outside the query (side effects), you're going to have a bad time.
+
+* **Bad:** Adding items to a global list inside a `.Select()`.
+* **Good:** Only performing pure calculations that return new data.
+
+### C. The "Small Data" Penalty
+
+For a list of 100 items, PLINQ will actually be **slower** than standard LINQ because the time it takes to manage the threads is longer than the time it takes to just run the loop.
+
+---
+
+## 4. Useful PLINQ Operators
+
+| Method | Purpose |
+| --- | --- |
+| **`AsParallel()`** | Enables parallel processing for the query. |
+| **`AsOrdered()`** | Forces the output to match the input sequence. |
+| **`WithDegreeOfParallelism(n)`** | Limits the query to use exactly `n` processor cores. |
+| **`ForAll()`** | Iterates over results in parallel (faster than a `foreach` loop). |
+
+---
+
+### Example: Heavy Computation
+
+If you were calculating the "Prime-ness" of a massive list of numbers, PLINQ would drastically reduce the time:
+
+```csharp
+var numbers = Enumerable.Range(1, 10_000_000);
+
+var primes = numbers.AsParallel()
+                    .Where(n => IsPrime(n)) // Imagine IsPrime is a slow, heavy method
+                    .ToList();
+
+```
+LINQ doesn’t take full advantage of SQL features like a cached execution plan for the stored procedure.
