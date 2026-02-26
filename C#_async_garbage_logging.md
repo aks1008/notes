@@ -187,7 +187,7 @@ async Task RunStoredProcedureAsync(CancellationToken cancellationToken)
 
 ---
 
-## 4. Finalizer
+## 4.  (Destructor)
 
 If a class defines a finalizer (`~MyClass()`), GC will call it before reclaiming the object's memory.
 
@@ -283,6 +283,105 @@ class MyClass : IDisposable
 
 ---
 
+### 1. Generational Collection (The "Why")
+
+The .NET GC is **generational**, based on the "Infant Mortality" hypothesis: most objects die young.
+
+* **Generation 0 (Gen 0):** Short-lived objects (e.g., local variables). Collections happen frequently and are very fast.
+* **Generation 1 (Gen 1):** The "buffer" zone for objects that survived Gen 0.
+* **Generation 2 (Gen 2):** Long-lived objects (e.g., static data, singletons). Collections here are "Full GCs," which are expensive and can cause "Stop-the-World" pauses.
+
+> **Interview Tip:** Mention that moving an object from Gen 0 to Gen 2 is expensive because it requires memory copying.
+
+### 2. The LOH (Large Object Heap)
+
+Objects larger than **85,000 bytes** go straight to a special area called the **Large Object Heap (LOH)**.
+
+* **The Problem:** The LOH is not compacted by default (historically). This leads to **fragmentation**, where you have enough total memory, but not enough *contiguous* space for a new large object, causing an `OutOfMemoryException`.
+* **Modern C#:** Mention `GCSettings.LargeObjectHeapCompactionMode` if you want to sound like an expert.
+
+### 3. Managed vs. Unmanaged Resources
+
+This links back to your `IDisposable` code.
+
+* **Managed:** Memory handled by the GC (strings, arrays, class instances).
+* **Unmanaged:** Resources the OS owns (File handles, Window handles, Network sockets, Database connections).
+* **The Link:** The GC *cannot* see unmanaged resources. If you don't call `Dispose()`, the memory for the C# object might be freed, but the OS handle stays open (a "leak").
+
+### 4. GC Flavors (Workstation vs. Server)
+
+FAANG interviews often involve "System Design" elements. You should know:
+
+* **Workstation GC:** Optimized for low latency (responsiveness). Used for desktop apps.
+* **Server GC:** Optimized for high throughput. It creates a separate GC heap and thread for **each CPU core**, allowing parallel collection.
+
+By default, a standalone C# console app or desktop app uses Workstation GC. However, if you are running an ASP.NET Core web service, Server GC is usually enabled by default because it is optimized for high-throughput, multi-threaded scenarios.
+
+Here is how it works and how you control it:
+
+1. How to Configure It
+You don't change this in your C# code; you change it in your project configuration or environment variables. This allows the same compiled binary to behave differently in Dev vs. Production.
+
+Option A: The Project File (.csproj)
+
+```xml
+<PropertyGroup>
+  <ServerGarbageCollection>true</ServerGarbageCollection>
+</PropertyGroup>
+```
+
+---
+
+To understand the setting, you first have to understand the **LOH problem**:
+
+### 1. The Problem: Fragmentation
+
+Normally, when the Garbage Collector clears out dead objects, it **compacts** the memory—it slides all the surviving objects together so there are no gaps.
+
+However, moving large objects (anything $> 85,000$ bytes) is extremely CPU-intensive. To save performance, the GC historically **never compacted the LOH**. It would just leave "holes" where old objects used to be. Eventually, you could have 1GB of total free memory, but if it’s all in small 10KB holes, you'll get an `OutOfMemoryException` the moment you try to allocate a new 1MB array.
+
+---
+
+### 2. The Solution: `LargeObjectHeapCompactionMode`
+
+Introduced in .NET 4.5.1, this setting allows you to tell the GC: *"The next time you do a full Generation 2 collection, please actually slide the large objects together to fix the holes."*
+
+#### How to use it:
+
+```csharp
+GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+GC.Collect(); // Force the collection to happen now
+
+```
+
+---
+
+### 3. Key Interview Facts
+
+If this comes up in an interview, here are the technical nuances you should mention:
+
+* **It is "Sticky" for only one collection:** Notice the enum value is `CompactOnce`. After the GC runs and compacts the LOH, the setting automatically resets to `Default`. You have to opt-in every time you want it to happen.
+* **Performance Hit:** Compacting the LOH is a "Stop-the-World" event. It freezes the entire application while it moves those massive chunks of memory. You should only trigger this during "quiet" times in your app's lifecycle.
+* **Alternative (Background GC):** Modern .NET (Core/5/6+) has improved background GC, but LOH fragmentation can still happen in long-running services (like a high-traffic web server) that handle many large byte arrays or strings.
+
+---
+
+### Why FAANG cares:
+
+At scale, "Memory Leaks" aren't always about forgetting to delete an object; sometimes they are **Virtual Memory leaks** caused by fragmentation. A service might crash with plenty of RAM available simply because the LOH looks like Swiss cheese.
+
+---
+
+### 5. Common Interview Questions & "Gotchas"
+
+| Question | The Correct Answer |
+| --- | --- |
+| **Can you force a GC?** | Yes, `GC.Collect()`, but you **should almost never do it** in production. It interferes with the GC's self-tuning logic and triggers expensive Gen 2 collections. |
+| **What is a "Memory Leak" in C#?** | Since we have a GC, a leak usually happens when a **static** field or a **long-lived event handler** holds a reference to an object that should be dead. |
+| **What is the Finalizer queue?** | Objects with Finalizers (`~MyClass`) stay in memory for *at least* one extra GC cycle because they must be moved to a "freachable" queue to run their cleanup code. |
+
+---
+
 ## 6. Logging
 
 - Logging in built-in .NET can be configured inside the `Microsoft.Extensions.Logging` namespace. You can log messages at different levels (Information, Warning, Error, etc.) and output them to various providers (Console, Debug, Files, etc.).
@@ -311,6 +410,8 @@ public class MyService
 ```
 
 `ILogger<MyService> _logger` - here we pass `MyService`, so that service name can be logged to identify from where logs come, and used for log filtering.
+
+When you pass MyService as a type parameter to ILogger<MyService>, the logger uses the fully qualified class name (e.g., MyApp.Services.MyService) as the category for all logs generated by that instance.
 
 ### Structured Logging with Serilog
 
@@ -343,6 +444,157 @@ Log.Logger = logger;
 
 // builder.Host.UseSerilog();
 ```
+
+To implement Splunk logging in .NET Core, you should avoid writing directly to the Splunk API within your application code. Instead, the industry standard is to use **Serilog** with an **Asynchronous Sink**.
+
+This ensures that if Splunk is slow or down, your Web API doesn't hang while waiting to send a log.
+
+---
+
+### 1. The Architecture
+
+There are two main ways to get logs into Splunk:
+
+* **HEC (Http Event Collector):** Your app sends logs directly to a Splunk URL via HTTP/S. (Best for Cloud/Serverless).
+* **Universal Forwarder:** Your app writes logs to a local file, and a Splunk agent reads that file and ships it. (Best for high-performance on-prem VMs).
+
+---
+
+### 2. Implementation via HEC (Recommended)
+
+#### Step 1: Install NuGet Packages
+
+You'll need Serilog and the specific Splunk Sink.
+
+```bash
+dotnet add package Serilog.AspNetCore
+dotnet add package Serilog.Sinks.Splunk
+
+```
+
+#### Step 2: Configure `appsettings.json`
+
+Keep your Splunk URL and **HEC Token** (generated in the Splunk Web UI) out of the code.
+
+```json
+{
+  "Serilog": {
+    "WriteTo": [
+      {
+        "Name": "EventCollector",
+        "Args": {
+          "splunkHost": "https://your-splunk-url:8088",
+          "eventCollectorToken": "your-hec-token-here",
+          "index": "api_logs",
+          "sourceType": "json"
+        }
+      }
+    ]
+  }
+}
+
+```
+
+#### Step 3: Setup in `Program.cs`
+
+In .NET 6+, you integrate Serilog into the host builder.
+
+```csharp
+using Serilog;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Load Serilog configuration from appsettings
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog(); // Replaces default logger with Serilog
+
+var app = builder.Build();
+// ... rest of your middleware
+
+```
+
+---
+
+### 3. FAANG Interview "Deep Dive" Points
+
+If you are asked about this in an interview, mention these three optimizations:
+
+#### A. Structured Logging (JSON)
+
+Don't just send strings. Send objects. Splunk is a powerful search engine; if you send a JSON object like `{ "UserId": 123, "Latency": 450 }`, you can immediately run a query in Splunk like `index=api_logs | stats avg(Latency) by UserId`.
+
+#### B. The "Async" Sink
+
+Always emphasize that you use **Asynchronous Sinks**.
+
+> *"I configure the Splunk sink to be asynchronous so that log ingestion latency doesn't impact the Request/Response cycle of the API."*
+
+#### C. Correlation IDs
+
+In a microservices environment, use a **Correlation ID** (often via `Serilog.Enrichers.CorrelationId`). This allows you to trace a single request as it travels through 10 different services by searching for one unique ID in Splunk.
+
+---
+
+### 4. Which one should you use?
+
+| Method | Pros | Cons |
+| --- | --- | --- |
+| **HEC (HTTP)** | Fast setup, no extra software on the server. | Can lose logs if the network or Splunk is down. |
+| **File + Forwarder** | Extremely reliable (local disk acts as a buffer). | Requires installing the Splunk Universal Forwarder agent. |
+
+## Serilog
+
+Serilog knows where to send your logs through a concept called **Sinks**. Think of a "Sink" as a specific destination (like a file, a console, or an API) that Serilog is told to "pour" data into.
+
+Here is exactly how the hand-off happens:
+
+### 1. The Configuration (The Map)
+
+When your application starts, Serilog reads your `appsettings.json` or your code-based configuration. Within that configuration, there is a `WriteTo` section.
+
+When you add the `Serilog.Sinks.Splunk` package, it registers a specific "instruction set" in Serilog. When Serilog sees `"Name": "EventCollector"`, it looks up that registered instruction and says, *"Okay, any logs I receive need to be formatted and sent to the Splunk URL provided in the arguments."*
+
+---
+
+### 2. The Internal Pipeline (The Factory)
+
+Serilog operates like an assembly line. When you write `_logger.LogInformation("User {Id} logged in", userId);`, the following happens:
+
+1. **Log Event Creation:** Serilog creates a "LogEvent" object. This isn't just a string; it’s a structured object containing the timestamp, the message template, and the property (`userId = 123`).
+2. **Enrichment:** It adds extra data (like MachineName, ThreadId, or CorrelationId).
+3. **Filtering:** It checks if the log level (Information) meets the minimum requirement (e.g., Warning).
+4. **The Dispatch:** Serilog looks at its list of **Sinks**. If "Splunk" is in that list, it hands the LogEvent to the Splunk Sink.
+
+---
+
+### 3. The Splunk Sink (The Courier)
+
+The Splunk Sink is the "worker" that knows the Splunk language.
+
+* **Formatting:** It converts the LogEvent object into a **Splunk-friendly JSON format** (Hark! This is why it’s called "Structured Logging").
+* **Buffering:** To be efficient, it doesn't send one HTTP request per log. It waits until it has a "batch" (e.g., 50 logs) or a certain amount of time has passed.
+* **Transmission:** It opens an HTTPS connection to the **HEC (Http Event Collector)** endpoint and "POSTs" that JSON data using your HEC Token as a key to open the door.
+
+---
+
+### 4. FAANG Interview Detail: "The Black Box"
+
+If an interviewer asks, *"What happens if the Splunk Sink fails?"*, you should know about **SelfLog**.
+
+Because Serilog is a logger, it can't really log its own errors to itself (that would cause an infinite loop). You have to enable `Serilog.Debugging.SelfLog` to see why logs aren't reaching Splunk:
+
+```csharp
+// Send Serilog's internal errors to the Console so you can see why Splunk is failing
+Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
+
+```
+
+### Summary for Interview
+
+> "Serilog uses a **provider-based architecture** where 'Sinks' act as output adapters. By configuring the Splunk Sink with a HEC token and URL, Serilog's internal pipeline dispatches structured LogEvent objects to the sink, which then batches and transmits them via asynchronously over HTTP."
 
 ### Azure Application Insights
 
