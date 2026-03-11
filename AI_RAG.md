@@ -70,3 +70,48 @@ Don't just read—**build a "Personal Research Assistant."** 1.  **Level 1:** Ma
 2.  **Level 2:** Give it a "Search Tool" (Tavily or DuckDuckGo) to use if the PDFs don't have the answer (Agentic).
 3.  **Level 3:** Give it a "Writer Tool" to save the summary into a markdown file (Tool Use).
 
+# Agentic AI
+
+The shift from RESTful API design to Agentic AI is a move from "Instruction-Following" to "Goal-Seeking." In a RESTful world, you are the architect providing a map; in an Agentic world, you are a manager providing a mission.
+
+## Pip command
+```python
+# Run script
+python main.py
+
+# install package
+pip install numpy
+
+# install dependencies 
+pip install -r requirements.txt
+
+# spin up an existing project
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# capturing dependencies
+pip freeze > requirements.txt
+
+```
+
+## UV command
+```python
+# Run script
+un run main.py
+
+# install package
+un add numpy
+
+# install dependencies 
+un add -r requirements.txt
+
+# spin up an existing project
+uv sync
+
+# capturing dependencies
+(captures automatically)
+
+# create new project
+uv init
+```
