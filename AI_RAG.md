@@ -115,3 +115,77 @@ uv sync
 # create new project
 uv init
 ```
+
+# MCP
+
+MCP Client ---> MCP Server
+
+![alt text](./Images/MCP.png)
+
+![alt text](./Images/mcp_flow.png)
+
+References: 
+- [MCP Antropic Sample Project](./Reference%20Projects/MCP_Project_Antropics/README.md)
+
+## MCP Server 
+```python
+from pydantic import Field
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("DocumentMCP", log_level="Error")
+
+docs = {
+    "doc1": "This is the content of document 1",
+    "doc2": "This is the content of document 2"
+}
+
+# Create a tool
+# Python MCP SDK, will convert this tool to JSON format, having different decorators, description, more information helps LLM 
+@mcp.tool(
+    name="read_doc_contents",
+    description="Read the contents of a document and return it as a string." # this description will be used by LLM to identify when to use this tool, so it should be clear
+)
+# This is the function to call, when MCP client invokes this tool
+def read_document(
+    doc_id: str = Field(description="Id of the document to read")
+):
+    # first handle not found use cases, so LLM can handle this gracefully
+    if doc_id not in docs:
+        raise ValueError(f"Doc with id {doc_id} not found")
+    return docs[doc_id]
+
+@mcp.tool(
+    name="edit_docs_contents",
+    description="Edit the contents of a document."
+)
+def edit_document(
+    doc_id: str = Field(description="Id of the document to edit"),
+    new_content: str = Field(description="New content for the document")
+):
+    if doc_id not in docs:
+        raise ValueError(f"Doc with id {doc_id} not found")
+    docs[doc_id] = new_content
+    return f"Document {doc_id} updated successfully"
+```
+To Test MCP server locally, run below command:
+
+```script
+mcp dev mcp_server.py
+```
+![alt text](./Images/local_testing_mcp_server.png)
+
+## MCP Client
+
+![alt text](./Images/mcp_client.png)
+
+```python
+# List tools
+async def list_tools():
+    result = await self.session().list_tools()
+    return result.tools
+
+# Call tools
+async def call_tool(tool_name: str, tool_input: dict):
+    result = await self.session().call_tool(tool_name, tool_input)
+    return result
+```
