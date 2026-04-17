@@ -1,5 +1,53 @@
 # Graphs
 
+## Table of Contents
+
+1. **Key Components**
+   - Vertex (Node)
+   - Edge
+   - Weight
+
+2. **Core Classifications**
+   - Directed vs. Undirected
+   - Weighted vs. Unweighted
+   - Cyclic vs. Acyclic
+
+3. **Representation in Memory**
+   - Adjacency Matrix
+   - Adjacency List
+   - Comparison Table
+
+4. **Essential Graph Algorithms**
+   - Traversal Algorithms
+     - Breadth-First Search (BFS)
+     - Depth-First Search (DFS)
+   - Shortest Path & Optimization
+     - Dijkstra's Algorithm
+     - Bellman-Ford
+     - Prim's & Kruskal's (MST)
+
+5. **Common Use Cases**
+   - Social Networks
+   - Navigation
+   - Dependency Resolution
+   - Recommendation Engines
+
+6. **Adjacency Matrix vs. Adjacency List**
+   - Core Comparison Table
+   - When to use Adjacency Matrix
+   - When to use Adjacency List
+   - Practical Examples
+   - Summary Recommendation
+
+7. **Python Implementation**
+   - Adjacency List Implementation
+   - Weighted Graph Implementation
+   - Essential Operations
+     - BFS Implementation
+   - Python-Specific Tips
+
+---
+
 In Data Structures and Algorithms (DSA), a **Graph** is a non-linear data structure consisting of a finite set of vertices (or nodes) and a set of edges that connect these vertices. Unlike trees, graphs do not have a strict root-child hierarchy and can contain cycles.
 
 ### 1. Key Components

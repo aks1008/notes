@@ -1,5 +1,47 @@
 # Stacks, Queues, and Priority Queues
 
+## Table of Contents
+
+1. **Stacks (LIFO - Last-In, First-Out)**
+   - Core Principle and Logic
+   - Python Implementation
+   - Common Use Cases
+     - Undo/Redo functionality
+     - Reversing data
+     - Depth-First Search (DFS)
+   - Code Examples
+
+2. **Queues (FIFO - First-In, First-Out)**
+   - Core Principle and Logic
+   - Python Implementation (collections.deque)
+   - Common Use Cases
+     - Printer task scheduling
+     - Handling web requests
+     - Breadth-First Search (BFS)
+   - Code Examples
+
+3. **Priority Queues (Best-In, First-Out)**
+   - Core Principle and Logic
+   - Python Implementation (heapq module)
+   - Common Use Cases
+     - Emergency room triage
+     - Dijkstra's Shortest Path
+     - Finding Top K frequent items
+   - Code Examples
+
+4. **Comparison Summary**
+   - At-a-Glance Comparison Table
+   - Performance Characteristics
+   - Python Tools Overview
+
+5. **Interview Tips and Advanced Concepts**
+   - Hidden Stack/Queue Concepts
+     - Recursion and Call Stack
+     - Tree Level-order Traversal
+   - Implementation Considerations
+
+---
+
 In Python, these three data structures are essential for managing the **order of processing**. While they might seem similar, they differ entirely in which element gets "served" next.
 
 ## 1. Stacks (LIFO)

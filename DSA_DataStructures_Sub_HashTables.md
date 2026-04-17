@@ -1,5 +1,59 @@
 # Hash Tables (Map/Sets)
 
+## Table of Contents
+
+1. **The Core Mechanism: The Hash Table**
+   - How Hashing Works
+   - Storage and Retrieval Process
+   - Why Use Hash Tables? (O(1) Complexity)
+
+2. **Hash Maps vs. Hash Sets**
+   - Comparison Table
+   - Core Differences
+   - How They Work Under the Hood
+     - HashMap: The Dictionary Approach
+     - HashSet: The Unique List
+   - When to Use Which?
+
+3. **The "Gotcha": Collisions**
+   - What are Collisions?
+   - Collision Handling Methods
+     - Chaining
+     - Open Addressing
+
+4. **Python Implementation**
+   - Dictionaries (The Hash Map)
+   - Sets (The Hash Set)
+   - The "Hashable" Rule
+   - How it Works Under the Hood
+
+5. **Removing Duplicates Efficiently**
+   - The Problem: List Approach
+   - The Solution: Set Approach
+   - Practical Example: Big Data Cleaner
+   - Pro-Tip: Preserving Order with dict.fromkeys()
+
+6. **Advantages & Disadvantages**
+   - Advantages
+     - Speed (O(1) Factor)
+     - Flexibility
+     - Efficiency in De-duplication
+   - Disadvantages
+     - Collision Penalty
+     - Memory Overhead
+     - Lack of Ordering
+     - Range Query Limitations
+   - Summary Comparison Table
+
+7. **Building a Hash Table from Scratch**
+   - Implementation Overview
+   - Key Components Explained
+     - The Hash Function
+     - Handling Collisions (Chaining)
+   - What's Missing from the "Toy" Version
+
+---
+
 Think of a **Hash Table** as the high-speed filing cabinet of the computer science world. While a standard list makes you look through every folder until you find what you need, a hash table tells you exactly which drawer to open instantly.
 
 Here is the breakdown of how they work and how they form the backbone of **Maps** and **Sets**.

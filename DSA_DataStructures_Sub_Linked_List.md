@@ -1,5 +1,57 @@
 # Linked List Details
 
+## Table of Contents
+
+1. **Types of Linked Lists**
+   - Singly Linked List
+     - Structure and Visual Representation
+   - Doubly Linked List
+     - Structure and Visual Representation
+   - Circular Linked List
+     - Structure and Visual Representation
+
+2. **Core Implementation**
+   - ListNode Class Definition
+   - Operations Comparison Table
+     - Array vs Linked List Performance
+
+3. **Essential Interview Patterns**
+   - The "Dummy Head" Technique
+   - Fast and Slow Pointers (Tortoise and Hare)
+     - Finding the Middle
+     - Cycle Detection
+   - Reversing a List (The #1 Interview Question)
+     - Three-Pointer Technique
+
+4. **Linked List vs. Python List**
+   - Performance Considerations
+   - Memory Management Differences
+   - Interview Cheat Sheet
+     - Best Practices
+     - Space Complexity Guidelines
+     - Recursion Considerations
+
+5. **Fundamental Concepts**
+   - Linear Data Structure Properties
+   - Memory Allocation Characteristics
+   - Key Terminology
+     - Head Node
+     - Tail Node
+   - Use Cases and Applications
+
+6. **Basic Operations**
+   - Insertion
+   - Deletion (Beginning, Last, Any Position)
+   - Display / Print
+   - Search
+
+7. **Advanced Operations**
+   - Reverse Linked List
+     - Java Implementation
+     - Three-Pointer Algorithm
+
+---
+
 ## Types of Linked Lists
 
 ### Singly Linked List
