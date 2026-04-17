@@ -1,6 +1,6 @@
 # C\# Comprehensive Study Guide
 
-## Table of Contents
+## Table of Contents 
 
 1. [C\# Fundamentals](#c-fundamentals)  
 2. [.NET Architecture & Compilation](#net-architecture--compilation)  
