@@ -2,55 +2,55 @@
 
 ## Table of Contents
 
-1. **The Core Mechanism: The Hash Table**
-   - How Hashing Works
-   - Storage and Retrieval Process
-   - Why Use Hash Tables? (O(1) Complexity)
+- [1. The Core Mechanism: The Hash Table](#1-the-core-mechanism-the-hash-table)
+  - [How Hashing Works](#how-hashing-works)
+  - [Storage and Retrieval Process](#storage-and-retrieval-process)
+  - [Why Use Hash Tables? (O(1) Complexity)](#why-use-them)
 
-2. **Hash Maps vs. Hash Sets**
-   - Comparison Table
-   - Core Differences
-   - How They Work Under the Hood
-     - HashMap: The Dictionary Approach
-     - HashSet: The Unique List
-   - When to Use Which?
+- [2. Hash Maps vs. Hash Sets](#2-hash-maps-vs-hash-sets)
+  - [Comparison Table](#comparison-table)
+  - [Core Differences](#core-differences)
+  - [How They Work Under the Hood](#how-they-work-under-the-hood)
+    - [HashMap: The Dictionary Approach](#1-hashmap-the-dictionary-approach)
+    - [HashSet: The Unique List](#2-hashset-the-unique-list)
+  - [When to Use Which?](#when-to-use-which)
 
-3. **The "Gotcha": Collisions**
-   - What are Collisions?
-   - Collision Handling Methods
-     - Chaining
-     - Open Addressing
+- [3. The "Gotcha": Collisions](#3-the-gotcha-collisions)
+  - [What are Collisions?](#what-are-collisions)
+  - [Collision Handling Methods](#collision-handling-methods)
+    - [Chaining](#1-chaining)
+    - [Open Addressing](#2-open-addressing)
 
-4. **Python Implementation**
-   - Dictionaries (The Hash Map)
-   - Sets (The Hash Set)
-   - The "Hashable" Rule
-   - How it Works Under the Hood
+- [4. Python Implementation](#4-python-implementation)
+  - [Dictionaries (The Hash Map)](#1-dictionaries-the-hash-map)
+  - [Sets (The Hash Set)](#2-sets-the-hash-set)
+  - [The "Hashable" Rule](#3-the-hashable-rule)
+  - [How it Works Under the Hood](#how-it-works-under-the-hood)
 
-5. **Removing Duplicates Efficiently**
-   - The Problem: List Approach
-   - The Solution: Set Approach
-   - Practical Example: Big Data Cleaner
-   - Pro-Tip: Preserving Order with dict.fromkeys()
+- [5. Removing Duplicates Efficiently](#5-removing-duplicates-efficiently)
+  - [The Problem: List Approach](#the-problem-the-list-approach)
+  - [The Solution: Set Approach](#the-solution-the-set-approach)
+  - [Practical Example: Big Data Cleaner](#practical-example-the-big-data-cleaner)
+  - [Pro-Tip: Preserving Order with dict.fromkeys()](#pro-tip-preserving-order)
 
-6. **Advantages & Disadvantages**
-   - Advantages
-     - Speed (O(1) Factor)
-     - Flexibility
-     - Efficiency in De-duplication
-   - Disadvantages
-     - Collision Penalty
-     - Memory Overhead
-     - Lack of Ordering
-     - Range Query Limitations
-   - Summary Comparison Table
+- [6. Advantages & Disadvantages](#6-advantages--disadvantages)
+  - [Advantages](#advantages)
+    - [Speed (The "O(1)" Factor)](#1-speed-the-o1-factor)
+    - [Flexibility](#2-flexibility)
+    - [Efficiency in De-duplication](#3-efficiency-in-de-duplication)
+  - [Disadvantages](#disadvantages)
+    - [The "Collision" Penalty](#1-the-collision-penalty)
+    - [Memory Overhead](#2-memory-overhead)
+    - [Lack of Ordering](#3-lack-of-ordering)
+    - [Not Great for "Range" Queries](#4-not-great-for-range-queries)
+  - [Summary Comparison](#summary-comparison)
 
-7. **Building a Hash Table from Scratch**
-   - Implementation Overview
-   - Key Components Explained
-     - The Hash Function
-     - Handling Collisions (Chaining)
-   - What's Missing from the "Toy" Version
+- [7. Building a Hash Table from Scratch](#7-building-a-hash-table-from-scratch)
+  - [Implementation Overview](#1-the-implementation)
+  - [Key Components Explained](#2-key-components-explained)
+    - [The Hash Function](#the-hash-function-_hash_function)
+    - [Handling Collisions (Chaining)](#handling-collisions-chaining)
+  - [What's Missing from the "Toy" Version](#3-whats-missing-from-this-toy-version)
 
 ---
 

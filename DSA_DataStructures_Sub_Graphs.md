@@ -2,49 +2,49 @@
 
 ## Table of Contents
 
-1. **Key Components**
-   - Vertex (Node)
-   - Edge
-   - Weight
+- [1. Key Components](#1-key-components)
+  - [Vertex (Node)](#vertex-node)
+  - [Edge](#edge)
+  - [Weight](#weight)
 
-2. **Core Classifications**
-   - Directed vs. Undirected
-   - Weighted vs. Unweighted
-   - Cyclic vs. Acyclic
+- [2. Core Classifications](#2-core-classifications)
+  - [Directed vs. Undirected](#directed-vs-undirected)
+  - [Weighted vs. Unweighted](#weighted-vs-unweighted)
+  - [Cyclic vs. Acyclic](#cyclic-vs-acyclic)
 
-3. **Representation in Memory**
-   - Adjacency Matrix
-   - Adjacency List
-   - Comparison Table
+- [3. Representation in Memory](#3-representation-in-memory)
+  - [Adjacency Matrix](#adjacency-matrix)
+  - [Adjacency List](#adjacency-list)
+  - [Comparison Table](#comparison-table)
 
-4. **Essential Graph Algorithms**
-   - Traversal Algorithms
-     - Breadth-First Search (BFS)
-     - Depth-First Search (DFS)
-   - Shortest Path & Optimization
-     - Dijkstra's Algorithm
-     - Bellman-Ford
-     - Prim's & Kruskal's (MST)
+- [4. Essential Graph Algorithms](#4-essential-graph-algorithms)
+  - [Traversal Algorithms](#traversal-algorithms)
+    - [Breadth-First Search (BFS)](#breadth-first-search-bfs)
+    - [Depth-First Search (DFS)](#depth-first-search-dfs)
+  - [Shortest Path & Optimization](#shortest-path--optimization)
+    - [Dijkstra's Algorithm](#dijkstras-algorithm)
+    - [Bellman-Ford](#bellman-ford)
+    - [Prim's & Kruskal's (MST)](#prims--kruskals-mst)
 
-5. **Common Use Cases**
-   - Social Networks
-   - Navigation
-   - Dependency Resolution
-   - Recommendation Engines
+- [5. Common Use Cases](#5-common-use-cases)
+  - [Social Networks](#social-networks)
+  - [Navigation](#navigation)
+  - [Dependency Resolution](#dependency-resolution)
+  - [Recommendation Engines](#recommendation-engines)
 
-6. **Adjacency Matrix vs. Adjacency List**
-   - Core Comparison Table
-   - When to use Adjacency Matrix
-   - When to use Adjacency List
-   - Practical Examples
-   - Summary Recommendation
+- [6. Adjacency Matrix vs. Adjacency List](#6-adjacency-matrix-vs-adjacency-list)
+  - [Core Comparison Table](#1-the-core-comparison)
+  - [When to use Adjacency Matrix](#2-when-to-use-an-adjacency-matrix)
+  - [When to use Adjacency List](#3-when-to-use-an-adjacency-list)
+  - [Practical Examples](#4-practical-example)
+  - [Summary Recommendation](#summary-recommendation)
 
-7. **Python Implementation**
-   - Adjacency List Implementation
-   - Weighted Graph Implementation
-   - Essential Operations
-     - BFS Implementation
-   - Python-Specific Tips
+- [7. Python Implementation](#7-python-implementation)
+  - [Adjacency List Implementation](#1-adjacency-list-implementation-python)
+  - [Weighted Graph Implementation](#2-weighted-graph-implementation)
+  - [Essential Operations](#3-essential-operations)
+    - [BFS Implementation](#breadth-first-search-bfs-1)
+  - [Python-Specific Tips](#python-specific-tips)
 
 ---
 

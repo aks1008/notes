@@ -10,6 +10,7 @@
   - [Array + List](#1-array--list)
     - [How List is internally implemented in Python](#how-list-is-internally-implemented-in-python)
   - [Dictionaries](#2-dictionaries)
+    - [How Dictonaries internally work in Python](#how-dictonaries-internally-work-in-python)
   - [Set](#3-set)
     - [Removing duplicates](#removing-duplicates)
     - [Membership Testing (The Speed Trap)](#membership-testing-the-speed-trap)
@@ -234,10 +235,120 @@ The most important thing to know for interviews is the Time Complexity:
 | .items() | Returns a view of all key-value tuples (useful for looping). |
 | .pop(key) | Removes the key and returns its value. |
 
+### How Dictonaries internally work in Python 
+
+To understand how Python dictionaries work under the hood, you have to look at the **hash table**. Since Python 3.6+, dictionaries are not just fast; they are also memory-efficient and **insertion-ordered**.
+
+Here is the breakdown of the internal machinery that makes a dict work in $O(1)$ average time complexity.
+
+---
+
+#### 1. The Core Data Structure
+In modern Python, a dictionary is split into two arrays:
+* **The Indices Array:** A sparse array of integers (the hash table).
+* **The Entries Array:** A dense array that stores the actual data in the order it was added.
 
 
+
+##### The Entry Layout
+Each item in the **Entries** array looks like this:
+```python
+[
+    hash_value, 
+    key_pointer, 
+    value_pointer
+]
+```
+
+---
+
+#### 2. The Lookup Process (Hashing)
+When you run `my_dict["key"]`, Python follows these steps:
+
+1.  **Hashing:** It computes the hash of the key using the internal `hash()` function.
+2.  **Indexing:** It takes the hash modulo the size of the **Indices** array to find a "slot."
+    * Example: $index = hash("key") \pmod 8$
+3.  **Redirection:** The value at that slot in the **Indices** array points to the row number in the **Entries** array.
+4.  **Verification:** Python checks if the stored key matches the searched key (to handle potential collisions).
+
+---
+
+#### 3. Collision Resolution
+No hash function is perfect. If two different keys map to the same index in the **Indices** array, a **collision** occurs.
+
+Python uses **Open Addressing** with **Linear Probing** (and some extra scrambling logic). If a slot is taken:
+1.  Python calculates a new index based on a perturbation formula.
+2.  It checks the next slot until it finds an empty one or a matching key.
+
+---
+
+#### 4. Why is it "Ordered" now?
+Before Python 3.6, the hash table was a single large, sparse array. This wasted a lot of memory and resulted in random iteration orders. 
+
+By separating the **Indices** and **Entries**, Python achieved two things:
+* **Compaction:** The **Entries** array is dense (no holes), saving roughly 20% to 25% of memory.
+* **Ordering:** Since new items are simply appended to the **Entries** array, iterating through that array naturally yields items in the order they were inserted.
+
+---
+
+#### 5. Resizing
+As you add more items, the hash table fills up. To keep lookups at $O(1)$, Python keeps the table relatively empty.
+* **Load Factor:** When the table is roughly **2/3 full**, Python triggers a resize.
+* **The Process:** A new, larger table is allocated (usually doubling in size), and all existing keys are re-hashed and moved into the new structure.
+
+> **Note:** This is why dictionaries are incredibly fast for lookups but can occasionally have a "slow" insertion when a resize is triggered.
+
+### Why modern Python dictionaries are so much more memory-efficient than they used to be
+
+It is more like two **flat, contiguous blocks of memory** (C-style arrays). 
+
+Here is how the memory is laid out visually:
+
+### The Memory Layout
+
+#### 1. The Indices Array (The "Sparse" Table)
+This is a small array of integers. Its only job is to map a hash bucket to a row in the Entries array. 
+* If a slot is empty, it holds a dummy value (like `-1`).
+* If a slot is active, it holds the **index** (0, 1, 2...) of where that data lives in the next array.
+
+### 2. The Entries Array (The "Dense" Table)
+This is where the actual data lives. It is a tightly packed array where each "row" is a fixed-size struct containing the hash, key, and value.
+
+
+
+---
+
+### How it looks in practice
+Imagine we have a dictionary: `d = {"name": "Gemini", "year": 2026}`.
+
+#### The Entries Array (Sequential)
+Items are appended here exactly as they arrive. There is no empty space between "name" and "year".
+
+| Index | Hash | Key Pointer | Value Pointer |
+| :--- | :--- | :--- | :--- |
+| **0** | 124... | Pointer to "name" | Pointer to "Gemini" |
+| **1** | 567... | Pointer to "year" | Pointer to 2026 |
+
+#### The Indices Array (The Map)
+This array is larger to prevent collisions, but it only stores small integers.
+
+| Hash Slot | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Value** | -1 | **1** | -1 | -1 | **0** | -1 | -1 | -1 |
+
+*In this example, the hash of "name" landed in slot 4, which tells Python: "Go look at row **0** of the Entries array."*
+
+---
+
+### Why this is a "Win"
+1.  **Memory:** In older Python versions (pre-3.6), the "Indices" and "Entries" were combined. This meant every empty slot in the hash table was wasting a huge amount of memory (storing empty space for hashes, keys, and values). Now, empty slots only waste a single small integer in the Indices array.
+2.  **Iteration:** When you call `d.keys()`, Python doesn't have to skip over empty slots in a sparse table. It just loops through the **Entries** array from index `0` to `n`. Since that array is filled sequentially, the order is preserved.
+3.  **CPU Cache:** Because the Entries array is contiguous (items are side-by-side), the CPU can load it into the cache much more effectively than a scattered, sparse table.
+
+---
 
 ## 3. Set
+
 **Uniqueness, Unordered, Mutable, Highly Efficient $O(1)$ time complexity)**
 
 | Operation | Operator | Description |

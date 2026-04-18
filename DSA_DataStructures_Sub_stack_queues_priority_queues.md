@@ -2,43 +2,43 @@
 
 ## Table of Contents
 
-1. **Stacks (LIFO - Last-In, First-Out)**
-   - Core Principle and Logic
-   - Python Implementation
-   - Common Use Cases
-     - Undo/Redo functionality
-     - Reversing data
-     - Depth-First Search (DFS)
-   - Code Examples
+- [1. Stacks (LIFO - Last-In, First-Out)](#1-stacks-lifo)
+  - [Core Principle and Logic](#core-principle-and-logic)
+  - [Python Implementation](#python-implementation)
+  - [Common Use Cases](#when-to-use)
+    - [Undo/Redo functionality](#undo-redo-functionality)
+    - [Reversing data](#reversing-data)
+    - [Depth-First Search (DFS)](#depth-first-search-dfs-in-graphs)
+  - [Code Examples](#code-examples)
 
-2. **Queues (FIFO - First-In, First-Out)**
-   - Core Principle and Logic
-   - Python Implementation (collections.deque)
-   - Common Use Cases
-     - Printer task scheduling
-     - Handling web requests
-     - Breadth-First Search (BFS)
-   - Code Examples
+- [2. Queues (FIFO - First-In, First-Out)](#2-queues-fifo)
+  - [Core Principle and Logic](#core-principle-and-logic-1)
+  - [Python Implementation (collections.deque)](#python-implementation-collectionsdeque)
+  - [Common Use Cases](#when-to-use-1)
+    - [Printer task scheduling](#printer-task-scheduling)
+    - [Handling web requests](#handling-web-requests)
+    - [Breadth-First Search (BFS)](#breadth-first-search-bfs-in-graphs)
+  - [Code Examples](#code-examples-1)
 
-3. **Priority Queues (Best-In, First-Out)**
-   - Core Principle and Logic
-   - Python Implementation (heapq module)
-   - Common Use Cases
-     - Emergency room triage
-     - Dijkstra's Shortest Path
-     - Finding Top K frequent items
-   - Code Examples
+- [3. Priority Queues (Best-In, First-Out)](#3-priority-queues-best-in-first-out)
+  - [Core Principle and Logic](#core-principle-and-logic-2)
+  - [Python Implementation (heapq module)](#python-implementation-heapq-module)
+  - [Common Use Cases](#when-to-use-2)
+    - [Emergency room triage](#emergency-room-triage)
+    - [Dijkstra's Shortest Path](#dijkstras-shortest-path-algorithm)
+    - [Finding Top K frequent items](#finding-the-top-k-frequent-items)
+  - [Code Examples](#code-examples-2)
 
-4. **Comparison Summary**
-   - At-a-Glance Comparison Table
-   - Performance Characteristics
-   - Python Tools Overview
+- [4. Comparison Summary](#-comparison-at-a-glance)
+  - [At-a-Glance Comparison Table](#-comparison-at-a-glance)
+  - [Performance Characteristics](#performance-characteristics)
+  - [Python Tools Overview](#python-tools-overview)
 
-5. **Interview Tips and Advanced Concepts**
-   - Hidden Stack/Queue Concepts
-     - Recursion and Call Stack
-     - Tree Level-order Traversal
-   - Implementation Considerations
+- [5. Interview Tips and Advanced Concepts](#-interview-tip-the-hidden-stackqueue)
+  - [Hidden Stack/Queue Concepts](#-interview-tip-the-hidden-stackqueue)
+    - [Recursion and Call Stack](#recursion-uses-a-hidden-stack-the-call-stack)
+    - [Tree Level-order Traversal](#level-order-traversal-of-a-tree-is-just-a-fancy-name-for-using-a-queue-to-visit-nodes)
+  - [Implementation Considerations](#implementation-considerations)
 
 ---
 

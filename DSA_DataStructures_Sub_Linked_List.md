@@ -2,53 +2,53 @@
 
 ## Table of Contents
 
-1. **Types of Linked Lists**
-   - Singly Linked List
-     - Structure and Visual Representation
-   - Doubly Linked List
-     - Structure and Visual Representation
-   - Circular Linked List
-     - Structure and Visual Representation
+- [1. Types of Linked Lists](#types-of-linked-lists)
+  - [Singly Linked List](#singly-linked-list)
+    - [Structure and Visual Representation](#visual-representation)
+  - [Doubly Linked List](#doubly-linked-list)
+    - [Structure and Visual Representation](#visual-representation-1)
+  - [Circular Linked List](#circular-linked-list)
+    - [Structure and Visual Representation](#visual-representation-2)
 
-2. **Core Implementation**
-   - ListNode Class Definition
-   - Operations Comparison Table
-     - Array vs Linked List Performance
+- [2. Core Implementation](#core-implementation)
+  - [ListNode Class Definition](#listnode-class-definition)
+  - [Operations Comparison Table](#operations-comparison-table)
+    - [Array vs Linked List Performance](#array--python-list--linked-list)
 
-3. **Essential Interview Patterns**
-   - The "Dummy Head" Technique
-   - Fast and Slow Pointers (Tortoise and Hare)
-     - Finding the Middle
-     - Cycle Detection
-   - Reversing a List (The #1 Interview Question)
-     - Three-Pointer Technique
+- [3. Essential Interview Patterns](#4-essential-interview-patterns)
+  - [The "Dummy Head" Technique](#a-the-dummy-head-technique)
+  - [Fast and Slow Pointers (Tortoise and Hare)](#b-fast-and-slow-pointers-tortoise-and-hare)
+    - [Finding the Middle](#middle)
+    - [Cycle Detection](#cycle-detection)
+  - [Reversing a List (The #1 Interview Question)](#c-reversing-a-list-the-1-interview-question)
+    - [Three-Pointer Technique](#three-pointer-technique)
 
-4. **Linked List vs. Python List**
-   - Performance Considerations
-   - Memory Management Differences
-   - Interview Cheat Sheet
-     - Best Practices
-     - Space Complexity Guidelines
-     - Recursion Considerations
+- [4. Linked List vs. Python List](#5-linked-list-vs-python-list)
+  - [Performance Considerations](#performance-considerations)
+  - [Memory Management Differences](#memory-management-differences)
+  - [Interview Cheat Sheet](#-interview-cheat-sheet)
+    - [Best Practices](#always-check-for-none)
+    - [Space Complexity Guidelines](#space-complexity)
+    - [Recursion Considerations](#recursion)
 
-5. **Fundamental Concepts**
-   - Linear Data Structure Properties
-   - Memory Allocation Characteristics
-   - Key Terminology
-     - Head Node
-     - Tail Node
-   - Use Cases and Applications
+- [5. Fundamental Concepts](#linked-list)
+  - [Linear Data Structure Properties](#linear-data-structure)
+  - [Memory Allocation Characteristics](#dynamic-linear-data-structure)
+  - [Key Terminology](#key-terminology)
+    - [Head Node](#head-node)
+    - [Tail Node](#tail-node)
+  - [Use Cases and Applications](#we-can-use-linked-list-for-implementation-of-stack-queue-graph-has-maps-etc)
 
-6. **Basic Operations**
-   - Insertion
-   - Deletion (Beginning, Last, Any Position)
-   - Display / Print
-   - Search
+- [6. Basic Operations](#basic-operations)
+  - [Insertion](#insertion)
+  - [Deletion (Beginning, Last, Any Position)](#deletion)
+  - [Display / Print](#display--print)
+  - [Search](#search)
 
-7. **Advanced Operations**
-   - Reverse Linked List
-     - Java Implementation
-     - Three-Pointer Algorithm
+- [7. Advanced Operations](#reverse-linked-list)
+  - [Reverse Linked List](#reverse-linked-list-1)
+    - [Java Implementation](#java-implementation)
+    - [Three-Pointer Algorithm](#three-pointer-algorithm)
 
 ---
 
