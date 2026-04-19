@@ -6,15 +6,22 @@
   - [Lists are Ordered](#1-lists-are-ordered)
   - [When you might want "Unordered" behavior](#2-when-you-might-want-unordered-behavior)
   - [The "Unordered" Confusion: Sets and Dictionaries](#3-the-unordered-confusion-sets-and-dictionaries)
-- [Arrays, Strings and Lists](#arrays-strings-and-lists)
+- [Arrays, Strings, and Lists](#arrays-strings-and-lists)
   - [Array + List](#1-array--list)
     - [How List is internally implemented in Python](#how-list-is-internally-implemented-in-python)
-  - [Dictionaries](#2-dictionaries)
-    - [How Dictonaries internally work in Python](#how-dictonaries-internally-work-in-python)
-  - [Set](#3-set)
-    - [Removing duplicates](#removing-duplicates)
-    - [Membership Testing (The Speed Trap)](#membership-testing-the-speed-trap)
-    - [Quick Comparison (List, Tuple, Set)](#quick-comparison-list-tuple-set)
+- [Dictionaries](#2-dictionaries)
+   - [How Dictonaries internally work in Python](#how-dictonaries-internally-work-in-python)
+- [Set](#3-set)
+  - [Removing duplicates](#removing-duplicates)
+  - [Membership Testing (The Speed Trap)](#membership-testing-the-speed-trap)
+  - [How set works internally in Python](#how-set-works-internally-in-python)
+  - [Quick Comparison (List, Tuple, Set)](#quick-comparison-list-tuple-set)
+- [Tuple](#4-tuple)
+  - [Key Characteristics](#1-key-characteristics)
+  - [Syntax and Creation](#2-syntax-and-creation)
+  - [Why use a Tuple instead of a List?](#3-why-use-a-tuple-instead-of-a-list)
+  - [Internal Implementation](#4-internal-implementation)
+  - [Common Operations](#5-common-operations)
 - [CRUD Operations](#crud-operations)
 - [Python & C# Comparison](#python--c-comparison)
 
@@ -409,19 +416,145 @@ If you need to check if a value exists inside a collection multiple times (e.g.,
 - **List Search**: $O(n)$ — Python has to look at every item one by one.
 - **Set Search**: $O(1)$ — Python uses a hash table to find the item instantly.
 
+### How set works internally in Python
+Python's `set` is a powerful, unordered collection of unique elements. Internally, it is implemented as a **hash table**, very similar to how dictionaries work but without the values.
+
+Think of it as a dictionary where there are only keys.
+
+---
+
+#### 1. The Core Mechanism: Hashing
+When you add an element to a set, Python doesn't just "drop it in." It uses a **hash function** to determine exactly where that element should live in memory.
+
+1.  **The Hash:** Python calls `hash(element)` to get an integer.
+2.  **The Index:** It then performs a bitwise operation (essentially a modulo) to map that hash to a specific "bucket" or slot in the underlying array.
+    * For an element $x$, the index $i$ is calculated roughly as:
+    $$i = \text{hash}(x) \pmod{\text{capacity}}$$
+
+
+
+---
+
+#### 2. Managing Collisions
+Sometimes, two different objects produce the same index. This is called a **collision**. Python handles this using **Open Addressing** with a specific probing algorithm.
+
+* **Linear Probing (Simplified):** If slot `i` is full, Python looks for another slot using a formula that spreads the search across the table.
+* **The Check:** While searching, Python checks two things to see if the element is already there:
+    1.  Does the **hash** match?
+    2.  Does the **identity** match (`is`) or the **value** match (`==`)?
+* **The Result:** This is why sets only allow **hashable** objects (like strings, numbers, and tuples) and why they are so fast for lookups.
+
+---
+
+#### 3. Dynamic Resizing
+As you add more items, the hash table fills up. To keep operations fast, Python maintains a **load factor**. 
+
+* Once the table is roughly **2/3 full**, Python allocates a larger block of memory (usually doubling the size).
+* Every existing element is then **re-hashed** and moved to a new position in the larger table. This is why adding a single element can occasionally take longer than usual.
+
+---
+
+#### 4. Performance Breakdown
+Because of this architecture, sets offer incredible efficiency for membership testing:
+
+| Operation | Average Case | Worst Case (Many Collisions) |
+| :--- | :--- | :--- |
+| **Add** | $O(1)$ | $O(n)$ |
+| **Lookup (`in`)** | $O(1)$ | $O(n)$ |
+| **Remove** | $O(1)$ | $O(n)$ |
+
+---
+
+#### Summary of Constraints
+* **Unordered:** Because the position depends on the hash value (which can change if the table is resized), sets do not track the order of insertion.
+* **Unique:** If you try to add an item that hashes to the same value and evaluates as equal to an existing item, Python simply doesn't add the new one.
+* **Hashable Only:** You cannot put a `list` or another `set` inside a set because they are mutable and their hash could change, which would "break" the table's logic.
+
+## 4. Tuple
+
+In Python, a **tuple** is a collection of objects that is **ordered** and **immutable**. You can think of it as a "constant list"—once you create it, you cannot change, add, or remove elements.
+
+---
+
+### 1. Key Characteristics
+* **Ordered:** They maintain the exact sequence in which elements are defined.
+* **Immutable:** This is the defining feature. Unlike lists, tuples cannot be modified after creation. This makes them safer for data that shouldn't change.
+* **Heterogeneous:** They can store a mix of different data types (integers, strings, even other tuples).
+* **Indexable:** You access elements using their position (starting at `0`).
+
+---
+
+### 2. Syntax and Creation
+Tuples are defined using parentheses `()` instead of the square brackets `[]` used for lists.
+
+```python
+# A simple tuple
+my_tuple = ("Python", 3.12, True)
+
+# A tuple with one element (note the trailing comma!)
+single_element = (5,) 
+
+# Parentheses are often optional (Tuple Packing)
+packed_tuple = 1, 2, 3
+```
+
+> **Note:** If you try to create a single-element tuple like `(5)`, Python will treat it as an integer in parentheses. You **must** include a comma: `(5,)`.
+
+---
+
+### 3. Why use a Tuple instead of a List?
+
+| Feature | List `[]` | Tuple `()` |
+| :--- | :--- | :--- |
+| **Mutability** | Mutable (can change) | Immutable (cannot change) |
+| **Memory** | Uses more memory | More memory-efficient |
+| **Performance** | Slightly slower | Faster access and creation |
+| **Use Case** | Collections that grow/shrink | Fixed data (coordinates, settings) |
+| **As Dict Key** | No (unhashable) | Yes (if elements are hashable) |
+
+---
+
+### 4. Internal Implementation
+Under the hood, tuples are simpler than lists. Because they are immutable, Python allocates the **exact** amount of memory needed for the elements at creation time. 
+
+
+
+* **Fixed Size:** Unlike lists, which over-allocate memory to allow for `append()` operations, a tuple's memory footprint is static.
+* **The "Immutability Caveat":** While the tuple itself cannot be changed, if it contains a **mutable** object (like a list), that list can still be modified.
+    ```python
+    t = (1, 2, [3, 4])
+    t[2].append(5)  # This works! The reference is the same, but the content changed.
+    ```
+
+---
+
+### 5. Common Operations
+* **Unpacking:** Assigning tuple elements to variables in one line.
+    ```python
+    coords = (10, 20)
+    x, y = coords  # x = 10, y = 20
+    ```
+* **Concatenation:** You can "add" tuples, but it actually creates a brand new tuple in memory.
+    ```python
+    new_tuple = (1, 2) + (3, 4) # Result: (1, 2, 3, 4)
+    ```
+
+
 ## Quick Comparison (List, Tuple, Set)
 
 In Python, **List**, **Tuple**, and **Set** are the most common built-in data types used to store collections of data. While they might seem similar at first glance, they behave very differently regarding order, changeability, and how they handle duplicate values.
 
 Here is a breakdown of their primary differences:
 
-| Feature | List | Tuple | Set |
+| Feature | List | Tuple | Set | Dictionary |
 | :--- | :--- | :--- | :--- |
-| **Syntax** | `[1, 2, 3]` | `(1, 2, 3)` | `{1, 2, 3}` |
-| **Ordering** | Ordered | Ordered | Unordered |
-| **Mutability** | Mutable (Can change) | Immutable (Cannot change) | Mutable |
-| **Duplicates** | Allows duplicates | Allows duplicates | No duplicates allowed |
-| **Indexing** | Supported | Supported | Not supported |
+| **Syntax** | `[1, 2, 3]` | `(1, 2, 3)` | `{1, 2, 3}` | `{"key": "value"}` |
+| **Ordering** | Ordered | Ordered | Unordered | Ordered (since 3.7+) |
+| **Mutability** | Mutable (Can change) | Immutable (Cannot change) | Mutable | Mutable |
+| **Duplicates** | Allows duplicates | Allows duplicates | No duplicates allowed | No duplicate keys |
+| **Indexing** | Supported | Supported | Not supported | Key-based access |
+| **Lookup Speed** | O(n) | O(n) | O(1) | O(1) average |
+| **Memory Use** | Higher | Lower | Medium | Higher |
 
 ---
 
@@ -443,6 +576,12 @@ A set is an **unordered** collection of **unique** items. This means a set will 
 * **Best for:** Membership testing (checking if an item exists in a group), removing duplicates from another collection, and performing mathematical operations like unions or intersections.
 * **Example:** A list of unique user IDs or a collection of tags for a blog post.
 
+### 4. Dictionary `{}`
+A dictionary is an **ordered** (since Python 3.7+) collection of **key-value pairs**. It provides fast lookup by key while maintaining insertion order. Dictionaries are incredibly versatile for mapping relationships between data.
+
+* **Best for:** Fast lookups by unique identifier, storing configuration settings, representing relationships between entities.
+* **Example:** A phone book mapping names to phone numbers, or user profile data keyed by user ID.
+
 ---
 
 ### When to use which?
@@ -450,9 +589,10 @@ A set is an **unordered** collection of **unique** items. This means a set will 
 * Use a **List** if you need a sequence of items that might change.
 * Use a **Tuple** when you have a sequence of items that will never change; it also acts as a "hint" to other developers that the data is constant.
 * Use a **Set** when you need to ensure every item is unique and the specific order of those items doesn't matter.
+* Use a **Dictionary** when you need fast lookups by unique keys and want to maintain insertion order (Python 3.7+).
 
 ## CRUD Operations
-Here is the complete code implementation for **List**, **Tuple**, and **Set**, covering the full lifecycle of data manipulation in Python.
+Here is the complete code implementation for **List**, **Tuple**, **Set**, and **Dictionary**, covering the full lifecycle of data manipulation in Python.
 
 ---
 
@@ -542,15 +682,72 @@ for provider in cloud_providers:
 
 ---
 
+### 4. Dictonaries (Mutable & Key-Value Pairs)
+
+```python
+
+# --- CREATE ---
+# Keys must be hashable (strings, numbers, tuples)
+user_profile = {
+    "username": "coder_pro",
+    "level": 42,
+    "is_active": True
+}
+
+# --- GET (READ) ---
+# Direct access (throws KeyError if key is missing)
+name = user_profile["username"] 
+
+# Safe access (returns None or a default value if missing)
+status = user_profile.get("is_active", False)
+
+# --- ADD ---
+user_profile["email"] = "dev@example.com"
+
+# --- UPDATE ---
+# Direct update
+user_profile["level"] = 43
+
+# Bulk update/merge
+user_profile.update({"is_active": False, "last_login": "2024-05-20"})
+
+# --- REMOVE / DELETE ---
+# Removes and returns the value
+deleted_val = user_profile.pop("level") 
+
+# Removes the last inserted item (LIFO order)
+last_item = user_profile.popitem() 
+
+# Direct deletion
+del user_profile["username"]
+
+# Clear all items
+user_profile.clear()
+
+# --- LOOPING ---
+# Loop through keys
+for key in user_profile:
+    print(f"Field: {key}")
+
+# Loop through values
+for val in user_profile.values():
+    print(f"Value: {val}")
+
+# Loop through both (most common)
+for key, val in user_profile.items():
+    print(f"{key.capitalize()}: {val}")
+```
+---
+
 ### Quick Summary of Methods
 
-| Operation | List | Tuple | Set |
-| :--- | :--- | :--- | :--- |
-| **Get** | `list[i]` | `tuple[i]` | `val in set` |
-| **Add** | `.append(x)` | `tup + (x,)` | `.add(x)` |
-| **Update** | `list[i] = x` | N/A (Immutable) | `.discard()` then `.add()` |
-| **Delete** | `.pop(i)`, `.remove(x)` | `del tup` (whole) | `.remove(x)`, `.discard(x)` |
-| **Looping** | Ordered | Ordered | **Unordered** |
+| Operation | List | Tuple | Set | Dictionary |
+| :--- | :--- | :--- | :--- | :--- |
+| **Get** | `list[i]` | `tuple[i]` | `val in set` | `dict[key]` |
+| **Add** | `.append(x)` | `tup + (x,)` | `.add(x)` | `dict[key] = val` |
+| **Update** | `list[i] = x` | N/A (Immutable) | `.discard()` then `.add()` | `dict[key] = new_val` |
+| **Delete** | `.pop(i)`, `.remove(x)` | `del tup` (whole) | `.remove(x)`, `.discard(x)` | `dict.pop(key)`, `del dict[key]` |
+| **Looping** | Ordered | Ordered | **Unordered** | `for key in dict` |
 
 When building performance-heavy applications—like an enterprise inventory system or a microservices-based API—choosing a **Set** for lookups can be significantly more efficient than a **List**, as set lookups are generally $O(1)$ compared to $O(n)$ for lists.
 
